@@ -1,0 +1,84 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Order #{{ id }}</h1>
+      <p class="page-subtitle">Order details and management</p>
+    </div>
+    <a routerLink="/orders" class="btn btn-outline">← Back to Orders</a>
+  </div>
+
+  @if (successMsg()) {
+    <div class="alert alert-success">{{ successMsg() }}</div>
+  }
+  @if (errorMsg()) {
+    <div class="alert alert-error">{{ errorMsg() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="loading-overlay"><span class="spinner lg"></span><p>Loading order...</p></div>
+  } @else if (orderService.state().selectedOrder) {
+    @let order = orderService.state().selectedOrder!;
+    <div class="detail-grid">
+      <div class="detail-card">
+        <h2>Order Information</h2>
+        <div class="detail-row">
+          <span class="detail-label">Order ID</span>
+          <span class="detail-value">#{{ order.orderId }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Customer</span>
+          <span class="detail-value">{{ order.user?.username || 'N/A' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Email</span>
+          <span class="detail-value">{{ order.user?.email || 'N/A' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Total Amount</span>
+          <span class="detail-value highlight">{{ order.totalAmount | currency }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Products Count</span>
+          <span class="detail-value">{{ order.productIds?.length || 0 }} items</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Created</span>
+          <span class="detail-value">{{ order.createdAt | date:'medium' }}</span>
+        </div>
+        @if (order.shippingAddress) {
+          <div class="detail-row">
+            <span class="detail-label">Shipping Address</span>
+            <span class="detail-value">{{ order.shippingAddress }}</span>
+          </div>
+        }
+        @if (order.notes) {
+          <div class="detail-row">
+            <span class="detail-label">Notes</span>
+            <span class="detail-value">{{ order.notes }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Status Update -->
+      <div class="detail-card">
+        <h2>Update Status</h2>
+        <div class="current-status">
+          Current: <span class="status-badge status-{{ order.status }}">{{ order.status | titlecase }}</span>
+        </div>
+
+        <div class="status-options">
+          @for (s of statuses; track s.value) {
+            <button
+              class="status-option"
+              [class.active]="order.status === s.value"
+              [disabled]="order.status === s.value || updating()"
+              (click)="updateStatus(s.value)"
+            >
+              {{ s.icon }} {{ s.label }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

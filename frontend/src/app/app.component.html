@@ -1,0 +1,79 @@
+<div class="app-shell">
+
+  <!-- Mobile Sidebar Overlay -->
+  @if (isAuthenticated()) {
+    <div
+      class="sidebar-overlay"
+      [class.open]="sidebarOpen()"
+      (click)="closeSidebar()"
+    ></div>
+  }
+
+  <!-- Sidebar -->
+  @if (isAuthenticated()) {
+    <nav class="sidebar" [class.open]="sidebarOpen()">
+
+      <div class="sidebar-brand">
+        <div class="brand-logo">⚡</div>
+        <span class="brand-name">MEAN<span class="brand-accent">Shop</span></span>
+      </div>
+
+      <div class="nav-section-label">Main Menu</div>
+
+      <ul class="nav-links" (click)="closeSidebar()">
+        <li>
+          <a routerLink="/dashboard" routerLinkActive="active">
+            <span class="nav-icon">📊</span> Dashboard
+          </a>
+        </li>
+        <li>
+          <a routerLink="/products" routerLinkActive="active">
+            <span class="nav-icon">📦</span> Products
+          </a>
+        </li>
+        <li>
+          <a routerLink="/orders" routerLinkActive="active">
+            <span class="nav-icon">🛒</span> Orders
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar">{{ userInitial() }}</div>
+          <div class="user-meta">
+            <span class="user-name">{{ user()?.username }}</span>
+            <span class="user-role">{{ user()?.role }}</span>
+          </div>
+        </div>
+        <button class="logout-btn" (click)="logout()">
+          <span>↩</span> Logout
+        </button>
+      </div>
+
+    </nav>
+  }
+
+  <!-- Mobile Topbar -->
+  @if (isAuthenticated()) {
+    <header class="topbar">
+      <button class="hamburger-btn" (click)="toggleSidebar()" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="topbar-brand">
+        <div class="brand-logo">⚡</div>
+        <span>MEAN<span style="color:var(--secondary)">Shop</span></span>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="user-avatar" style="width:32px;height:32px;font-size:.78rem;flex-shrink:0">{{ userInitial() }}</div>
+    </header>
+  }
+
+  <!-- Main Content -->
+  <main class="main-content" [class.no-sidebar]="!isAuthenticated()">
+    <router-outlet />
+  </main>
+
+</div>
