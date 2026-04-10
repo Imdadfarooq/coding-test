@@ -23,25 +23,31 @@ import { WeatherService } from '../../core/services/weather.service';
       <!-- Stats Cards -->
       <div class="stats-grid">
         <div class="stat-card stat-blue">
-          <div class="stat-icon">📦</div>
+          <div class="stat-card-left">
+            <div class="stat-icon-wrap">📦</div>
+          </div>
           <div class="stat-info">
             <span class="stat-value">{{ productCount() }}</span>
             <span class="stat-label">Total Products</span>
+            <a routerLink="/products" class="stat-link">View all →</a>
           </div>
-          <a routerLink="/products" class="stat-link">View all →</a>
         </div>
 
         <div class="stat-card stat-green">
-          <div class="stat-icon">🛒</div>
+          <div class="stat-card-left">
+            <div class="stat-icon-wrap">🛒</div>
+          </div>
           <div class="stat-info">
             <span class="stat-value">{{ orderCount() }}</span>
             <span class="stat-label">Total Orders</span>
+            <a routerLink="/orders" class="stat-link">View all →</a>
           </div>
-          <a routerLink="/orders" class="stat-link">View all →</a>
         </div>
 
         <div class="stat-card stat-purple">
-          <div class="stat-icon">💰</div>
+          <div class="stat-card-left">
+            <div class="stat-icon-wrap">💰</div>
+          </div>
           <div class="stat-info">
             <span class="stat-value">{{ totalRevenue() | currency }}</span>
             <span class="stat-label">Total Revenue</span>
@@ -49,7 +55,9 @@ import { WeatherService } from '../../core/services/weather.service';
         </div>
 
         <div class="stat-card stat-orange">
-          <div class="stat-icon">📈</div>
+          <div class="stat-card-left">
+            <div class="stat-icon-wrap">📈</div>
+          </div>
           <div class="stat-info">
             <span class="stat-value">{{ pendingOrders() }}</span>
             <span class="stat-label">Pending Orders</span>

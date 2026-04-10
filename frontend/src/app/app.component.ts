@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, signal, HostListener } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './core/services/auth.service';
@@ -9,14 +9,28 @@ import { AuthService } from './core/services/auth.service';
   imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
   template: `
     <div class="app-shell">
+
+      <!-- Mobile Sidebar Overlay -->
       @if (isAuthenticated()) {
-        <nav class="sidebar">
+        <div
+          class="sidebar-overlay"
+          [class.open]="sidebarOpen()"
+          (click)="closeSidebar()"
+        ></div>
+      }
+
+      <!-- Sidebar -->
+      @if (isAuthenticated()) {
+        <nav class="sidebar" [class.open]="sidebarOpen()">
+
           <div class="sidebar-brand">
-            <span class="brand-icon">⚡</span>
+            <div class="brand-logo">⚡</div>
             <span class="brand-name">MEAN<span class="brand-accent">Shop</span></span>
           </div>
 
-          <ul class="nav-links">
+          <div class="nav-section-label">Main Menu</div>
+
+          <ul class="nav-links" (click)="closeSidebar()">
             <li>
               <a routerLink="/dashboard" routerLinkActive="active">
                 <span class="nav-icon">📊</span> Dashboard
@@ -42,14 +56,36 @@ import { AuthService } from './core/services/auth.service';
                 <span class="user-role">{{ user()?.role }}</span>
               </div>
             </div>
-            <button class="logout-btn" (click)="logout()">↩ Logout</button>
+            <button class="logout-btn" (click)="logout()">
+              <span>↩</span> Logout
+            </button>
           </div>
+
         </nav>
       }
 
+      <!-- Mobile Topbar -->
+      @if (isAuthenticated()) {
+        <header class="topbar">
+          <button class="hamburger-btn" (click)="toggleSidebar()" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <div class="topbar-brand">
+            <div class="brand-logo">⚡</div>
+            <span>MEAN<span style="color:var(--secondary)">Shop</span></span>
+          </div>
+          <div class="topbar-spacer"></div>
+          <div class="user-avatar" style="width:32px;height:32px;font-size:.78rem;flex-shrink:0">{{ userInitial() }}</div>
+        </header>
+      }
+
+      <!-- Main Content -->
       <main class="main-content" [class.no-sidebar]="!isAuthenticated()">
         <router-outlet />
       </main>
+
     </div>
   `,
 })
@@ -57,8 +93,17 @@ export class AppComponent {
   private authService = inject(AuthService);
 
   isAuthenticated = this.authService.isAuthenticated;
-  user = this.authService.user;
-  userInitial = computed(() => this.user()?.username?.[0]?.toUpperCase() || '?');
+  user            = this.authService.user;
+  userInitial     = computed(() => this.user()?.username?.[0]?.toUpperCase() || '?');
+  sidebarOpen     = signal(false);
+
+  toggleSidebar(): void { this.sidebarOpen.update(v => !v); }
+  closeSidebar():  void { this.sidebarOpen.set(false); }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (window.innerWidth > 768) this.sidebarOpen.set(false);
+  }
 
   logout(): void {
     this.authService.logout();
